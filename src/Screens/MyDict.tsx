@@ -6,7 +6,7 @@ interface prop {
   route: any;
 }
 
-const StudyScreen = ({navigation, route}: prop) => {
+const MyDictScreen = ({navigation, route}: prop) => {
   return (
     <View style={s.wrap}>
       <Text>Hi</Text>
@@ -20,4 +20,4 @@ const s = StyleSheet.create({
   },
 });
 
-export default StudyScreen;
+export default MyDictScreen;
