@@ -7,16 +7,68 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import CustomHeader from '~/components/customHeader';
+import rootData from '~/assets/roots';
+
+const screenWidth = Dimensions.get('screen').width;
+
+interface ChildProp {
+  title: string;
+  navigation: any;
+  rootVoca?: string;
+  changed?: string;
+  rootMean?: string;
+  bgColor?: string;
+  vocaColor?: string;
+  changedColor?: string;
+  meanColor?: string;
+}
+
+const StudyButton = ({
+  title,
+  rootVoca,
+  changed,
+  rootMean,
+  bgColor,
+  vocaColor,
+  changedColor,
+  meanColor,
+  navigation,
+}: ChildProp) => {
+  return (
+    <View style={s.wordContainer}>
+      <TouchableOpacity
+        style={{...s.btnStartStudy, backgroundColor: bgColor || '#CDCDCD'}}
+        onPressOut={() => navigation.push('Study', {title})}>
+        <Text style={{...s.rootVoca, color: vocaColor || '#444444'}}>
+          {rootVoca}
+        </Text>
+        <Text style={{...s.changed, color: changedColor || '#444444'}}>
+          {changed}
+        </Text>
+        <Text style={{...s.rootMean, color: meanColor || '#444444'}}>
+          {rootMean}
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[s.btnSave, {backgroundColor: bgColor || '#CDCDCD'}]}>
+        <AntDesign
+          name="download"
+          size={screenWidth * 0.06}
+          color={vocaColor}
+        />
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 interface prop {
   navigation: any;
   route: any;
 }
 
-const screenWidth = Dimensions.get('screen').width;
-
-const StudyHomeScreen = () => {
+const StudyHomeScreen = ({navigation}: prop) => {
   return (
     <View style={s.wrap}>
       <CustomHeader title="Study" />
@@ -25,14 +77,20 @@ const StudyHomeScreen = () => {
           style={{
             alignItems: 'center',
           }}>
-          <View style={s.wordContainer}>
-            <TouchableOpacity style={s.btnStartStudy}>
-              <Text style={s.rootVoca}>Cap</Text>
-              <Text style={s.changed}>cept</Text>
-              <Text style={s.rootMean}>머리</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={s.btnSave}></TouchableOpacity>
-          </View>
+          {rootData.map((root: any) => (
+            <StudyButton
+              key={root.id}
+              title={root.title}
+              navigation={navigation}
+              rootVoca={root.rootVoca}
+              changed={root.changed}
+              rootMean={root.rootMean}
+              bgColor={root.bgColor}
+              vocaColor={root.vocaColor}
+              changedColor={root.changedColr}
+              meanColor={root.meanColor}
+            />
+          ))}
         </View>
       </ScrollView>
     </View>
@@ -56,7 +114,6 @@ const s = StyleSheet.create({
   btnStartStudy: {
     width: '60%',
     height: '50%',
-    backgroundColor: 'blue',
     borderRadius: 7,
     marginRight: 20,
     alignItems: 'center',
@@ -65,8 +122,9 @@ const s = StyleSheet.create({
   btnSave: {
     width: screenWidth * 0.1,
     height: screenWidth * 0.1,
-    backgroundColor: 'blue',
     borderRadius: 7,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   rootVoca: {
     color: 'black',

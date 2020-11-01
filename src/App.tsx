@@ -13,6 +13,7 @@ import {NavigationContainer} from '@react-navigation/native';
 
 import HomeScreen from '~/Screens/Home';
 import StudyHomeScreen from '~/Screens/StudyHome';
+import StudyScreen from '~/Screens/Study';
 import SettingsScreen from '~/Screens/Settings';
 import MyDictScreen from '~/Screens/MyDict';
 
@@ -27,6 +28,7 @@ const HomeStack = () => {
       <Stack.Screen name="StudyHome" component={StudyHomeScreen} />
       <Stack.Screen name="MyDict" component={MyDictScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name="Study" component={StudyScreen} />
     </Stack.Navigator>
   );
 };
