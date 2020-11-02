@@ -112,8 +112,21 @@ const s = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  btnAdd: {},
-  txtAdd: {},
+  btnAdd: {
+    width: '55%',
+    height: 55,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    borderRadius: 7,
+    padding: 5,
+    backgroundColor: '#E36473',
+  },
+  txtAdd: {
+    fontSize: 26,
+    fontFamily: 'sd_gothic_m',
+    alignSelf: 'center',
+    color: '#FBFBFB',
+  },
 });
 
 export default StudyScreen;
