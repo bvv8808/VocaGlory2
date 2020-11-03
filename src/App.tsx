@@ -16,6 +16,7 @@ import StudyHomeScreen from '~/Screens/StudyHome';
 import StudyScreen from '~/Screens/Study';
 import SettingsScreen from '~/Screens/Settings';
 import MyDictScreen from '~/Screens/MyDict';
+import ExamScreen from '~/Screens/Exam';
 
 const Stack = createStackNavigator();
 
@@ -29,6 +30,7 @@ const HomeStack = () => {
       <Stack.Screen name="MyDict" component={MyDictScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="Study" component={StudyScreen} />
+      <Stack.Screen name="Exam" component={ExamScreen} />
     </Stack.Navigator>
   );
 };

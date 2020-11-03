@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,10 +6,13 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
+  ToastAndroid,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import CustomHeader from '~/components/customHeader';
 import rootData from '~/assets/roots';
+import axios from 'axios';
+import db from '~/DB';
 
 const screenWidth = Dimensions.get('screen').width;
 
@@ -23,6 +26,8 @@ interface ChildProp {
   vocaColor?: string;
   changedColor?: string;
   meanColor?: string;
+  isCached: boolean;
+  completedDownload: any;
 }
 
 const StudyButton = ({
@@ -35,12 +40,14 @@ const StudyButton = ({
   changedColor,
   meanColor,
   navigation,
+  isCached,
+  completedDownload,
 }: ChildProp) => {
   return (
     <View style={s.wordContainer}>
       <TouchableOpacity
         style={{...s.btnStartStudy, backgroundColor: bgColor || '#CDCDCD'}}
-        onPressOut={() => navigation.push('Study', {title})}>
+        onPressOut={() => navigation.push('Study', {title, rootVoca})}>
         <Text style={{...s.rootVoca, color: vocaColor || '#444444'}}>
           {rootVoca}
         </Text>
@@ -52,9 +59,33 @@ const StudyButton = ({
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={[s.btnSave, {backgroundColor: bgColor || '#CDCDCD'}]}>
+        style={[s.btnSave, {backgroundColor: bgColor || '#CDCDCD'}]}
+        onPressOut={() => {
+          db.getTitlesInCachedWords()
+            .then((titles: any) => {
+              if (titles.includes(title)) {
+                ToastAndroid.show(
+                  '이미 다운로드 되었습니다',
+                  ToastAndroid.SHORT,
+                );
+                return null;
+              } else
+                return axios.get(
+                  `https://vokaglorywords.firebaseio.com/${title}.json`,
+                );
+            })
+            .then((res: any) => {
+              if (res !== null)
+                return db.cacheWords(title, JSON.stringify(res.data));
+              else return null;
+            })
+            .then((result: any) => {
+              console.log(typeof result, result);
+              if (result !== null) completedDownload(title);
+            });
+        }}>
         <AntDesign
-          name="download"
+          name={isCached ? 'check' : 'download'}
           size={screenWidth * 0.06}
           color={vocaColor}
         />
@@ -69,6 +100,18 @@ interface prop {
 }
 
 const StudyHomeScreen = ({navigation}: prop) => {
+  const [cachedTitle, setCachedTitle] = useState(new Array());
+
+  const updateState_cachedTitle = (newItem: string) => {
+    let copied = cachedTitle.slice();
+    copied.push(newItem);
+    setCachedTitle(copied);
+  };
+
+  useEffect(() => {
+    db.getTitlesInCachedWords().then((titles: any) => setCachedTitle(titles));
+  }, []);
+
   return (
     <View style={s.wrap}>
       <CustomHeader title="Study" />
@@ -89,6 +132,8 @@ const StudyHomeScreen = ({navigation}: prop) => {
               vocaColor={root.vocaColor}
               changedColor={root.changedColr}
               meanColor={root.meanColor}
+              isCached={cachedTitle.includes(root.title)}
+              completedDownload={updateState_cachedTitle}
             />
           ))}
         </View>
@@ -124,7 +169,7 @@ const s = StyleSheet.create({
     height: screenWidth * 0.1,
     borderRadius: 7,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   rootVoca: {
     color: 'black',

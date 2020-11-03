@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import CustomHeader from '~/components/customHeader';
 import axios from 'axios';
+import db from '~/DB';
 
 interface prop {
   navigation: any;
@@ -19,20 +20,39 @@ const StudyScreen = ({navigation, route}: prop) => {
   const [curWord, setCurWord] = useState({voca: '', pronounce: '', mean: ''});
   const [curIdx, setCurIdx] = useState(-1);
   const [shownMean, setShownMean] = useState(false);
+  // const [notShowInDict, setNotShowInDict] = useState(false);
 
   useEffect(() => {
-    axios
-      .get(`https://vokaglorywords.firebaseio.com/${route.params.title}.json`)
-      .then((res: any) => {
+    let notShowInDict = false;
+    db.getSettings()
+      .then((settings: any) => {
+        console.log('### settings ### ', typeof settings, settings);
+        // setNotShowInDict(settings.notShowWordInDict === 1 ? true : false);
+        notShowInDict = settings.notShowWordInDict === 1 ? true : false;
+      })
+      .then(() => db.getCachedWords(route.params.title))
+      .then((cachedWords: any) => {
+        console.log('## words.data ##', cachedWords);
+        if (cachedWords === null) {
+          return axios.get(
+            `https://vokaglorywords.firebaseio.com/${route.params.title}.json`,
+          );
+        } else return {data: JSON.parse(cachedWords.words)};
+      })
+      .then(async (words: any) => {
+        console.log('## notShowWordInDict ##', notShowInDict);
+        const existedVoca: any = await db.getDictByTitle(route.params.title);
+        return notShowInDict
+          ? words.data.filter((word: any) => !existedVoca.includes(word.voca))
+          : words.data;
+      })
+      .then((words: any) => {
         // console.log('# WORDS #', typeof res.data, res.data[0].mean);
-        const sortedWords = res.data.sort((a: any, b: any) => {
+        const sortedWords = words.sort((a: any, b: any) => {
           if (a.voca < b.voca) return -1;
           else return 1;
         });
         setWords(sortedWords);
-        // setCurVoca(sortedWords[0].voca);
-        // setCurPronounce(sortedWords[0].procounce);
-        // setCurMean(sortedWords[0].mean);
         setCurWord(sortedWords[0]);
         setCurIdx(0);
       });
@@ -76,7 +96,36 @@ const StudyScreen = ({navigation, route}: prop) => {
       </TouchableOpacity>
 
       <View style={s.btnContainer}>
-        <TouchableOpacity style={s.btnAdd}>
+        <TouchableOpacity
+          style={s.btnAdd}
+          onPressOut={() => {
+            db.isInDict(curWord.voca)
+              .then((isExist: any) => {
+                if (isExist) {
+                  ToastAndroid.show(
+                    '이미 단어장에 존재합니다',
+                    ToastAndroid.SHORT,
+                  );
+                  return null;
+                } else {
+                  return db.saveToDict(
+                    route.params.title,
+                    curWord.voca,
+                    curWord.mean,
+                    route.params.rootVoca,
+                  );
+                }
+              })
+              .then((res: any) => {
+                if (res !== null) {
+                  console.log('## saveToDict RESPONSE ## ', res);
+                  ToastAndroid.show(
+                    '단어장에 추가되었습니다',
+                    ToastAndroid.SHORT,
+                  );
+                }
+              });
+          }}>
           <Text style={s.txtAdd}>단어장에 추가</Text>
         </TouchableOpacity>
       </View>
@@ -87,16 +136,17 @@ const StudyScreen = ({navigation, route}: prop) => {
 const s = StyleSheet.create({
   wrap: {
     flex: 1,
+    backgroundColor: '#FBFBFB',
   },
   wordContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    flex: 7,
+    flex: 8,
   },
   txtVoca: {
     fontSize: 45,
     margin: 8,
+    marginTop: 50,
   },
   txtPronounce: {
     fontFamily: 'wdpron',
@@ -105,11 +155,12 @@ const s = StyleSheet.create({
   },
   txtMean: {
     fontSize: 30,
-    margin: 8,
+    marginVertical: 8,
+    textAlign: 'center',
   },
   btnContainer: {
-    flex: 3,
-    justifyContent: 'center',
+    flex: 2,
+    justifyContent: 'flex-start',
     alignItems: 'center',
   },
   btnAdd: {
