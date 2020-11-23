@@ -35,7 +35,7 @@ const SettingsScreen = () => {
 
   return (
     <View style={s.wrap}>
-      <CustomHeader title="Settings" />
+      <CustomHeader title="설정" />
       <View style={{...s.settingContainer, borderBottomWidth: 0.5}}>
         <View style={s.txtSettingBox}>
           <Text style={s.txtSetting}>단어 시험 시,</Text>

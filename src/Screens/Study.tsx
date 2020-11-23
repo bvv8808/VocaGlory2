@@ -60,7 +60,7 @@ const StudyScreen = ({navigation, route}: prop) => {
 
   return (
     <View style={s.wrap}>
-      <CustomHeader title="Study" />
+      <CustomHeader title={`단어 공부 - ${route.params.rootVoca}`} />
       <TouchableOpacity
         style={s.wordContainer}
         onPressOut={() => {

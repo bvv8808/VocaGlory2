@@ -2,7 +2,15 @@ import React, {useState, useEffect} from 'react';
 import {ScrollView, StyleSheet, Text, View, Dimensions} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
 import db from '~/DB';
+import CustomHeader from '~/components/customHeader';
+
+import {BannerAd, BannerAdSize, TestIds} from '@react-native-firebase/admob';
+
+const adUnitId = __DEV__
+  ? TestIds.BANNER
+  : 'ca-app-pub-5058591706901664/7933737905';
 
 const screenWidth = Dimensions.get('screen').width;
 
@@ -10,10 +18,6 @@ interface prop {
   navigation: any;
   route: any;
 }
-
-const getRandomIdx = (start: number, end: number) => {
-  return Math.floor(Math.random() * (end - start) + start);
-};
 
 interface AccordianProp {
   curKey: string;
@@ -26,15 +30,15 @@ const Accordian = ({curKey, curWords, goExam}: AccordianProp) => {
   return (
     <View style={s.accordian}>
       <TouchableOpacity
-        style={s.accordianHeader}
+        style={{...s.accordianHeader}}
         onPressOut={() => {
           setOpened(!opened);
         }}>
         <View style={{width: 50}}></View>
         <Text style={s.headerKey}>{curKey}</Text>
-        <TouchableOpacity
-          style={s.btnExam}
-          onPressOut={() => goExam()}></TouchableOpacity>
+        <TouchableOpacity style={s.btnExam} onPressOut={() => goExam()}>
+          <Entypo name="pencil" size={30} color="#E36473" />
+        </TouchableOpacity>
       </TouchableOpacity>
       <ScrollView style={[s.accordianBody, opened ? {} : {height: 0}]}>
         {curWords.map((word: any) => {
@@ -50,57 +54,48 @@ const Accordian = ({curKey, curWords, goExam}: AccordianProp) => {
   );
 };
 
-const MyDictScreen = ({navigation, route}: prop) => {
+const MyDictScreen = ({navigation}: prop) => {
   const [showByDate, setShowByDate] = useState(true);
-  const [dict, setDict] = useState(new Array());
   const [dateDict, setDateDict] = useState(new Object());
   const [rootDict, setRootDict] = useState(new Object());
   const [dateKeys, setDateKeys] = useState(new Array());
   const [rootKeys, setRootKeys] = useState(new Array());
 
   useEffect(() => {
-    db.getDict()
-      .then((dict: any) => {
-        setDict(dict);
-        return dict;
-      })
-      .then((dict: any) => {
-        let initialDateDict = new Object();
-        let initialRootDict = new Object();
-        let initialDateKeys = new Array();
-        let initialRootKeys = new Array();
-        dict.forEach((word: any) => {
-          if (initialDateDict.hasOwnProperty(word.pushedAt)) {
-            initialDateDict[word.pushedAt].push(word);
-          } else {
-            initialDateDict[word.pushedAt] = new Array();
-            initialDateKeys.push(word.pushedAt);
+    db.getDict().then((dict: any) => {
+      let initialDateDict = new Object();
+      let initialRootDict = new Object();
+      let initialDateKeys = new Array();
+      let initialRootKeys = new Array();
+      dict.forEach((word: any) => {
+        if (initialDateDict.hasOwnProperty(word.pushedAt)) {
+          initialDateDict[word.pushedAt].push(word);
+        } else {
+          initialDateDict[word.pushedAt] = new Array();
+          initialDateKeys.push(word.pushedAt);
 
-            initialDateDict[word.pushedAt].push(word);
-          }
+          initialDateDict[word.pushedAt].push(word);
+        }
 
-          if (initialRootDict.hasOwnProperty(word.rootVoca)) {
-            initialRootDict[word.rootVoca].push(word);
-          } else {
-            initialRootDict[word.rootVoca] = new Array();
-            initialRootKeys.push(word.rootVoca);
+        if (initialRootDict.hasOwnProperty(word.rootVoca)) {
+          initialRootDict[word.rootVoca].push(word);
+        } else {
+          initialRootDict[word.rootVoca] = new Array();
+          initialRootKeys.push(word.rootVoca);
 
-            initialRootDict[word.rootVoca].push(word);
-          }
-        });
-        setDateDict(initialDateDict);
-        setRootDict(initialRootDict);
-        setDateKeys(initialDateKeys.sort());
-        setRootKeys(initialRootKeys.sort());
-
-        console.log(initialDateKeys);
-        console.log(initialRootKeys);
+          initialRootDict[word.rootVoca].push(word);
+        }
       });
+      setDateDict(initialDateDict);
+      setRootDict(initialRootDict);
+      setDateKeys(initialDateKeys.sort());
+      setRootKeys(initialRootKeys.sort());
+    });
   }, []);
 
   return (
     <View style={s.wrap}>
-      <Text>Hi</Text>
+      <CustomHeader title="나의 단어장" />
       <View style={s.selectTab}>
         <TouchableOpacity
           style={s.radioContainer}
@@ -111,10 +106,10 @@ const MyDictScreen = ({navigation, route}: prop) => {
             name={
               showByDate ? 'radio-button-checked' : 'radio-button-unchecked'
             }
-            size={20}
-            color="red"
+            size={25}
+            color="#E33174"
           />
-          <Text>날짜별</Text>
+          <Text style={s.txtRadio}>날짜별</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={s.radioContainer}
@@ -125,47 +120,61 @@ const MyDictScreen = ({navigation, route}: prop) => {
             name={
               showByDate ? 'radio-button-unchecked' : 'radio-button-checked'
             }
-            size={20}
-            color="red"
+            size={25}
+            color="#E33174"
           />
-          <Text>어원별</Text>
+          <Text style={s.txtRadio}>어원별</Text>
         </TouchableOpacity>
       </View>
 
-      {/* {dict.map((word: any) => {
-        return (
-          <View style={{padding: 20, borderWidth: 1}} key={word.id}>
-            <Text>{word.voca}</Text>
-            <Text>{word.mean}</Text>
-            <Text>{word.rootVoca}</Text>
-            <Text>{word.pushedAt}</Text>
-          </View>
-        );
-      })} */}
-
-      {showByDate
-        ? dateKeys.map((key: string) => {
-            const curWords = dateDict[key];
-            return (
-              <Accordian
-                curWords={curWords}
-                curKey={key}
-                key={key}
-                goExam={() => navigation.push('Exam', {words: curWords})}
-              />
-            );
-          })
-        : rootKeys.map((key: string) => {
-            const curWords = rootDict[key];
-            return (
-              <Accordian
-                curWords={curWords}
-                curKey={key}
-                key={key}
-                goExam={() => navigation.push('Exam', {words: curWords})}
-              />
-            );
-          })}
+      <ScrollView>
+        {showByDate
+          ? dateKeys.map((key: string) => {
+              const curWords = dateDict[key];
+              return (
+                <Accordian
+                  curWords={curWords}
+                  curKey={key}
+                  key={key}
+                  goExam={() =>
+                    navigation.push('Exam', {
+                      words: curWords.map((word: any) => ({
+                        voca: word.voca,
+                        mean: word.mean,
+                      })),
+                    })
+                  }
+                />
+              );
+            })
+          : rootKeys.map((key: string) => {
+              const curWords = rootDict[key];
+              return (
+                <Accordian
+                  curWords={curWords}
+                  curKey={key}
+                  key={key}
+                  goExam={() =>
+                    navigation.push('Exam', {
+                      words: curWords.map((word: any) => ({
+                        voca: word.voca,
+                        mean: word.mean,
+                      })),
+                    })
+                  }
+                />
+              );
+            })}
+      </ScrollView>
+      <View style={s.adContainer}>
+        <BannerAd
+          unitId={adUnitId}
+          size={BannerAdSize.SMART_BANNER}
+          requestOptions={{
+            requestNonPersonalizedAdsOnly: true,
+          }}
+        />
+      </View>
     </View>
   );
 };
@@ -173,54 +182,72 @@ const MyDictScreen = ({navigation, route}: prop) => {
 const s = StyleSheet.create({
   wrap: {
     flex: 1,
+    backgroundColor: '#FBFBFB',
   },
   selectTab: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
+    marginTop: 50,
+    marginBottom: 20,
   },
   radioContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
   },
+  txtRadio: {
+    fontSize: 23,
+    fontFamily: 'sd_gothic_b',
+    color: '#333333',
+    letterSpacing: 1,
+    paddingLeft: 5,
+  },
   accordian: {
     width: '100%',
   },
   accordianHeader: {
     width: '100%',
-    height: 50,
-    borderBottomWidth: 1,
+    height: 55,
+    borderBottomWidth: 0.5,
+    borderColor: '#CDCDCD',
     justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'row',
   },
   accordianBody: {
-    backgroundColor: '#CFCFCF',
+    backgroundColor: '#ECDED5',
   },
   headerKey: {
     fontFamily: 'sd_gothic_m',
     fontSize: 25,
-    color: '#444444',
+    color: 'black',
   },
   bodyContainer: {
     borderBottomWidth: 0.5,
     paddingVertical: 10,
   },
   bodyVoca: {
-    fontSize: 20,
-    color: '#444444',
-    paddingLeft: 5,
+    fontSize: 25,
+    color: 'black',
+    paddingLeft: 10,
+    letterSpacing: 0.5,
   },
   bodyMean: {
-    fontSize: 16,
-    color: '#555555',
-    paddingLeft: 5,
+    fontSize: 15,
+    color: '#222222',
+    paddingLeft: 10,
   },
   btnExam: {
     width: 35,
     height: 35,
     marginRight: 15,
-    borderWidth: 1,
+    // borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  adContainer: {
+    width: '100%',
+    justifyContent: 'flex-end',
   },
 });
 

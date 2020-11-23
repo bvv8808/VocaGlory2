@@ -17,6 +17,7 @@ import db from '~/DB';
 const screenWidth = Dimensions.get('screen').width;
 
 interface ChildProp {
+  id: number;
   title: string;
   navigation: any;
   rootVoca?: string;
@@ -31,6 +32,7 @@ interface ChildProp {
 }
 
 const StudyButton = ({
+  id,
   title,
   rootVoca,
   changed,
@@ -46,17 +48,31 @@ const StudyButton = ({
   return (
     <View style={s.wordContainer}>
       <TouchableOpacity
-        style={{...s.btnStartStudy, backgroundColor: bgColor || '#CDCDCD'}}
+        style={{
+          ...s.btnStartStudy,
+          backgroundColor: bgColor || '#CDCDCD',
+          justifyContent: [1, 2].includes(id) ? 'center' : 'space-around',
+        }}
         onPressOut={() => navigation.push('Study', {title, rootVoca})}>
-        <Text style={{...s.rootVoca, color: vocaColor || '#444444'}}>
-          {rootVoca}
-        </Text>
-        <Text style={{...s.changed, color: changedColor || '#444444'}}>
-          {changed}
-        </Text>
-        <Text style={{...s.rootMean, color: meanColor || '#444444'}}>
-          {rootMean}
-        </Text>
+        {[1, 2].includes(id) ? (
+          <>
+            <Text style={{...s.rootVoca, color: vocaColor || '#444444'}}>
+              {rootVoca}
+            </Text>
+          </>
+        ) : (
+          <>
+            <Text style={{...s.rootVoca, color: vocaColor || '#444444'}}>
+              {rootVoca}
+            </Text>
+            <Text style={{...s.changed, color: changedColor || '#444444'}}>
+              {changed}
+            </Text>
+            <Text style={{...s.rootMean, color: meanColor || '#444444'}}>
+              {rootMean}
+            </Text>
+          </>
+        )}
       </TouchableOpacity>
       <TouchableOpacity
         style={[s.btnSave, {backgroundColor: bgColor || '#CDCDCD'}]}
@@ -114,7 +130,7 @@ const StudyHomeScreen = ({navigation}: prop) => {
 
   return (
     <View style={s.wrap}>
-      <CustomHeader title="Study" />
+      <CustomHeader title="단어 공부" />
       <ScrollView>
         <View
           style={{
@@ -122,6 +138,7 @@ const StudyHomeScreen = ({navigation}: prop) => {
           }}>
           {rootData.map((root: any) => (
             <StudyButton
+              id={root.id}
               key={root.id}
               title={root.title}
               navigation={navigation}
@@ -130,7 +147,7 @@ const StudyHomeScreen = ({navigation}: prop) => {
               rootMean={root.rootMean}
               bgColor={root.bgColor}
               vocaColor={root.vocaColor}
-              changedColor={root.changedColr}
+              changedColor={root.changedColor}
               meanColor={root.meanColor}
               isCached={cachedTitle.includes(root.title)}
               completedDownload={updateState_cachedTitle}
@@ -162,7 +179,6 @@ const s = StyleSheet.create({
     borderRadius: 7,
     marginRight: 20,
     alignItems: 'center',
-    justifyContent: 'space-around',
   },
   btnSave: {
     width: screenWidth * 0.1,
@@ -180,6 +196,7 @@ const s = StyleSheet.create({
     color: 'black',
     fontSize: 14,
     fontFamily: 'sd_gothic_b',
+    letterSpacing: 0.5,
   },
   rootMean: {
     color: 'black',

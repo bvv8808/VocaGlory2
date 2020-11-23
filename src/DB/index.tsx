@@ -137,10 +137,6 @@ const getSettings = () =>
     db.transaction(
       (tx) => {
         tx.executeSql(sql, [], (tx, result) => {
-          console.log(
-            '## transaction success : selectSettings ## ',
-            result.rows.item(0),
-          );
           resolve(result.rows.item(0));
         });
       },

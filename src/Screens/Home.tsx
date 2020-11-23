@@ -10,6 +10,12 @@ import {
 } from 'react-native';
 import {iconMain} from '~/assets/Images';
 
+import {BannerAd, BannerAdSize, TestIds} from '@react-native-firebase/admob';
+
+const adUnitId = __DEV__
+  ? TestIds.BANNER
+  : 'ca-app-pub-5058591706901664/7933737905';
+
 const screenHeight = Dimensions.get('screen').height;
 
 interface prop {
@@ -40,29 +46,42 @@ const HomeScreen = ({navigation}: prop) => {
           <Text style={{...s.btnText, color: '#FBFBFB'}}>설정</Text>
         </TouchableOpacity>
       </View>
-      <View style={s.adContainer}></View>
+      <View style={s.adContainer}>
+        <BannerAd
+          unitId={adUnitId}
+          size={BannerAdSize.SMART_BANNER}
+          requestOptions={{
+            requestNonPersonalizedAdsOnly: true,
+          }}
+        />
+      </View>
     </View>
   );
 };
 
 const s = StyleSheet.create({
   wrap: {
-    // flex: 1,
+    flex: 1,
     justifyContent: 'space-between',
+    backgroundColor: '#FBFBFB',
+    // alignItems: 'center',
   },
   header: {
+    width: '100%',
     height: screenHeight * 0.2,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
   },
   btnContainer: {
+    width: '100%',
     height: screenHeight * 0.55,
     alignItems: 'center',
     justifyContent: 'space-evenly',
   },
   adContainer: {
     width: '100%',
+    height: screenHeight * 0.15,
     justifyContent: 'flex-end',
   },
   logo: {
