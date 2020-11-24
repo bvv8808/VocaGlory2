@@ -7,6 +7,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
+  Platform,
 } from 'react-native';
 import {iconMain} from '~/assets/Images';
 
@@ -89,7 +90,7 @@ const s = StyleSheet.create({
     height: 120,
   },
   title: {
-    fontFamily: 'sd_gothic_b',
+    fontFamily: Platform.OS === 'ios' ? 'AppleSDGothicNeo-Bold' : 'sd_gothic_b',
     fontSize: 50,
     color: '#444444',
   },
@@ -103,7 +104,9 @@ const s = StyleSheet.create({
   },
   btnText: {
     fontSize: 26,
-    fontFamily: 'sd_gothic_m',
+    fontFamily:
+      Platform.OS === 'ios' ? 'AppleSDGothicNeo-Medium' : 'sd_gothic_m',
+
     alignSelf: 'center',
   },
 });

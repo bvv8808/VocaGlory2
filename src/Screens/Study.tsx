@@ -5,6 +5,7 @@ import {
   View,
   TouchableOpacity,
   ToastAndroid,
+  Platform,
 } from 'react-native';
 import CustomHeader from '~/components/customHeader';
 import axios from 'axios';
@@ -174,7 +175,8 @@ const s = StyleSheet.create({
   },
   txtAdd: {
     fontSize: 26,
-    fontFamily: 'sd_gothic_m',
+    fontFamily:
+      Platform.OS === 'ios' ? 'AppleSDGothicNeo-Medium' : 'sd_gothic_m',
     alignSelf: 'center',
     color: '#FBFBFB',
   },

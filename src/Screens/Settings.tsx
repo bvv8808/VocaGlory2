@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View, Switch, ToastAndroid} from 'react-native';
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+  Switch,
+  ToastAndroid,
+} from 'react-native';
 import CustomHeader from '~/components/customHeader';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -107,11 +114,13 @@ const s = StyleSheet.create({
   },
   txtSetting: {
     fontSize: 20,
-    fontFamily: 'sd_gothic_m',
+    fontFamily:
+      Platform.OS === 'ios' ? 'AppleSDGothicNeo-Medium' : 'sd_gothic_m',
   },
   txtRed: {
     fontSize: 16,
-    fontFamily: 'sd_gothic_m',
+    fontFamily:
+      Platform.OS === 'ios' ? 'AppleSDGothicNeo-Medium' : 'sd_gothic_m',
     color: '#EA6060',
   },
   swtichContainer: {

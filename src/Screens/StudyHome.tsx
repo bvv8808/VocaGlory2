@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Dimensions,
   ToastAndroid,
+  Platform,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import CustomHeader from '~/components/customHeader';
@@ -190,18 +191,18 @@ const s = StyleSheet.create({
   rootVoca: {
     color: 'black',
     fontSize: 20,
-    fontFamily: 'sd_gothic_b',
+    fontFamily: Platform.OS === 'ios' ? 'AppleSDGothicNeo-Bold' : 'sd_gothic_b',
   },
   changed: {
     color: 'black',
     fontSize: 14,
-    fontFamily: 'sd_gothic_b',
+    fontFamily: Platform.OS === 'ios' ? 'AppleSDGothicNeo-Bold' : 'sd_gothic_b',
     letterSpacing: 0.5,
   },
   rootMean: {
     color: 'black',
     fontSize: 16,
-    fontFamily: 'sd_gothic_b',
+    fontFamily: Platform.OS === 'ios' ? 'AppleSDGothicNeo-Bold' : 'sd_gothic_b',
   },
 });
 

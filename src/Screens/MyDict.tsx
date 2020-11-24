@@ -1,5 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {ScrollView, StyleSheet, Text, View, Dimensions} from 'react-native';
+import {
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -197,7 +204,7 @@ const s = StyleSheet.create({
   },
   txtRadio: {
     fontSize: 23,
-    fontFamily: 'sd_gothic_b',
+    fontFamily: Platform.OS === 'ios' ? 'AppleSDGothicNeo-Bold' : 'sd_gothic_b',
     color: '#333333',
     letterSpacing: 1,
     paddingLeft: 5,
@@ -218,7 +225,8 @@ const s = StyleSheet.create({
     backgroundColor: '#ECDED5',
   },
   headerKey: {
-    fontFamily: 'sd_gothic_m',
+    fontFamily:
+      Platform.OS === 'ios' ? 'AppleSDGothicNeo-Medium' : 'sd_gothic_m',
     fontSize: 25,
     color: 'black',
   },

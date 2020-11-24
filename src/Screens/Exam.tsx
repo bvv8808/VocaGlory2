@@ -1,5 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, ToastAndroid, View, Dimensions} from 'react-native';
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  ToastAndroid,
+  View,
+  Dimensions,
+} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import CustomHeader from '~/components/customHeader';
 import db from '~/DB';
@@ -93,7 +100,7 @@ const s = StyleSheet.create({
   },
   txtProgress: {
     fontSize: 40,
-    fontFamily: 'sd_gothic_b',
+    fontFamily: Platform.OS === 'ios' ? 'AppleSDGothicNeo-Bold' : 'sd_gothic_b',
     marginTop: 15,
   },
   examTab: {
@@ -115,7 +122,7 @@ const s = StyleSheet.create({
     marginVertical: 15,
     textAlign: 'center',
     color: '#2E997F',
-    fontFamily: 'sd_gothic_b',
+    fontFamily: Platform.OS === 'ios' ? 'AppleSDGothicNeo-Bold' : 'sd_gothic_b',
   },
 });
 
