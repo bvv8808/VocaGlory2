@@ -6,7 +6,9 @@ import {
   ToastAndroid,
   View,
   Dimensions,
+  SafeAreaView,
 } from 'react-native';
+import Toast from 'react-native-simple-toast';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import CustomHeader from '~/components/customHeader';
 import db from '~/DB';
@@ -49,46 +51,53 @@ const ExamScreen = ({navigation, route}: prop) => {
   }, [route.params]);
 
   return (
-    <View style={s.wrap}>
-      <CustomHeader title="단어 시험" />
-      <Text style={s.txtProgress}>
-        {curExamIdx + 1} / {examWords.length}
-      </Text>
-      <TouchableOpacity
-        style={s.examTab}
-        onPressOut={() => {
-          if (shownMean === false) {
-            setShownMean(true);
-          } else {
-            if (curExamIdx !== -1 && curExamIdx <= examWords.length - 1) {
-              if (curExamIdx === examWords.length - 1) {
-                ToastAndroid.show(
-                  '시험이 종료되었습니다. \n얼마나 맞추셨나요?',
-                  ToastAndroid.SHORT,
-                );
-                navigation.goBack();
-              } else {
-                setShownMean(false);
+    <SafeAreaView style={{flex: 1}}>
+      <View style={s.wrap}>
+        <CustomHeader title="단어 시험" />
+        <Text style={s.txtProgress}>
+          {curExamIdx + 1} / {examWords.length}
+        </Text>
+        <TouchableOpacity
+          style={s.examTab}
+          onPressOut={() => {
+            if (shownMean === false) {
+              setShownMean(true);
+            } else {
+              if (curExamIdx !== -1 && curExamIdx <= examWords.length - 1) {
+                if (curExamIdx === examWords.length - 1) {
+                  Platform.OS === 'android'
+                    ? ToastAndroid.show(
+                        '시험이 종료되었습니다. \n얼마나 맞추셨나요?',
+                        ToastAndroid.SHORT,
+                      )
+                    : Toast.show(
+                        '시험이 종료되었습니다. \n얼마나 맞추셨나요?',
+                        1,
+                      );
+                  navigation.goBack();
+                } else {
+                  setShownMean(false);
 
-                const nextIdx = curExamIdx + 1;
-                // setCurWord(words[nextIdx]);
-                setCurExamIdx(nextIdx);
+                  const nextIdx = curExamIdx + 1;
+                  // setCurWord(words[nextIdx]);
+                  setCurExamIdx(nextIdx);
+                }
               }
             }
-          }
-        }}>
-        <Text style={s.txtVoca}>
-          {curExamIdx !== -1 && curExamIdx < examWords.length
-            ? examWords[curExamIdx].voca
-            : ''}
-        </Text>
-        <Text style={s.txtMean}>
-          {curExamIdx !== -1 && curExamIdx < examWords.length && shownMean
-            ? examWords[curExamIdx].mean
-            : ''}
-        </Text>
-      </TouchableOpacity>
-    </View>
+          }}>
+          <Text style={s.txtVoca}>
+            {curExamIdx !== -1 && curExamIdx < examWords.length
+              ? examWords[curExamIdx].voca
+              : ''}
+          </Text>
+          <Text style={s.txtMean}>
+            {curExamIdx !== -1 && curExamIdx < examWords.length && shownMean
+              ? examWords[curExamIdx].mean
+              : ''}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 };
 

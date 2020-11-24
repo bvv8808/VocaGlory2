@@ -22,6 +22,8 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-5058591706901664~6540765180</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -45,6 +47,10 @@
 		<string>Fonts/sd_gothic_m.ttf</string>
 		<string>Fonts/sd_gothic_l.ttf</string>
 		<string>Fonts/wdpron.ttf</string>
+		<string>Fonts/AntDesign.ttf</string>
+		<string>Fonts/Entypo.ttf</string>
+		<string>Fonts/EvilIcons.ttf</string>
+		<string>Fonts/MaterialIcons.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

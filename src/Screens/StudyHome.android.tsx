@@ -8,7 +8,10 @@ import {
   Dimensions,
   ToastAndroid,
   Platform,
+  SafeAreaView,
+  StatusBar,
 } from 'react-native';
+import Toast from 'react-native-simple-toast';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import CustomHeader from '~/components/customHeader';
 import rootData from '~/assets/roots';
@@ -81,10 +84,12 @@ const StudyButton = ({
           db.getTitlesInCachedWords()
             .then((titles: any) => {
               if (titles.includes(title)) {
-                ToastAndroid.show(
-                  '이미 다운로드 되었습니다',
-                  ToastAndroid.SHORT,
-                );
+                Platform.OS === 'android'
+                  ? ToastAndroid.show(
+                      '이미 다운로드 되었습니다',
+                      ToastAndroid.SHORT,
+                    )
+                  : Toast.show('이미 다운로드 되었습니다', Toast.SHORT);
                 return null;
               } else
                 return axios.get(

@@ -7,6 +7,7 @@ import {
   Switch,
   ToastAndroid,
 } from 'react-native';
+import Toast from 'react-native-simple-toast';
 import CustomHeader from '~/components/customHeader';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -84,7 +85,12 @@ const SettingsScreen = () => {
           <TouchableOpacity
             onPressOut={() => {
               db.deleteCache().then(() =>
-                ToastAndroid.show('캐시가 삭제되었습니다', ToastAndroid.SHORT),
+                Platform.OS === 'android'
+                  ? ToastAndroid.show(
+                      '캐시가 삭제되었습니다',
+                      ToastAndroid.SHORT,
+                    )
+                  : Toast.show('캐시가 삭제되었습니다', Toast.SHORT),
               );
             }}>
             <EvilIcons name="trash" size={50} />

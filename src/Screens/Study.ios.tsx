@@ -6,7 +6,9 @@ import {
   TouchableOpacity,
   ToastAndroid,
   Platform,
+  SafeAreaView,
 } from 'react-native';
+import Toast from 'react-native-simple-toast';
 import CustomHeader from '~/components/customHeader';
 import axios from 'axios';
 import db from '~/DB';
@@ -60,77 +62,88 @@ const StudyScreen = ({navigation, route}: prop) => {
   }, []);
 
   return (
-    <View style={s.wrap}>
-      <CustomHeader title={`단어 공부 - ${route.params.rootVoca}`} />
-      <TouchableOpacity
-        style={s.wordContainer}
-        onPressOut={() => {
-          if (shownMean === false) {
-            setShownMean(true);
-          } else {
-            if (curIdx !== -1 && curIdx <= words.length - 1) {
-              if (curIdx === words.length - 1) {
-                ToastAndroid.show(
-                  '해당 어원의 단어 공부가 끝났습니다',
-                  ToastAndroid.SHORT,
-                );
-                navigation.goBack();
-              } else {
-                setShownMean(false);
+    <SafeAreaView style={{flex: 1}}>
+      <View style={s.wrap}>
+        <CustomHeader title={`단어 공부 - ${route.params.rootVoca}`} />
+        <TouchableOpacity
+          style={s.wordContainer}
+          onPressOut={() => {
+            if (shownMean === false) {
+              setShownMean(true);
+            } else {
+              if (curIdx !== -1 && curIdx <= words.length - 1) {
+                if (curIdx === words.length - 1) {
+                  Platform.OS === 'android'
+                    ? ToastAndroid.show(
+                        '해당 어원의 단어 공부가 끝났습니다',
+                        ToastAndroid.SHORT,
+                      )
+                    : Toast.show(
+                        '해당 어원의 단어 공부가 끝났습니다',
+                        Toast.SHORT,
+                      );
+                  navigation.goBack();
+                } else {
+                  setShownMean(false);
 
-                const nextIdx = curIdx + 1;
-                setCurWord(words[nextIdx]);
-                setCurIdx(nextIdx);
+                  const nextIdx = curIdx + 1;
+                  setCurWord(words[nextIdx]);
+                  setCurIdx(nextIdx);
+                }
               }
             }
-          }
-        }}>
-        <Text style={s.txtVoca}>
-          {curIdx < words.length ? curWord.voca : ''}
-        </Text>
-        <Text style={s.txtPronounce}>
-          {curIdx < words.length ? curWord.pronounce : ''}
-        </Text>
-        <Text style={s.txtMean}>
-          {curIdx < words.length && shownMean ? curWord.mean : ''}
-        </Text>
-      </TouchableOpacity>
-
-      <View style={s.btnContainer}>
-        <TouchableOpacity
-          style={s.btnAdd}
-          onPressOut={() => {
-            db.isInDict(curWord.voca)
-              .then((isExist: any) => {
-                if (isExist) {
-                  ToastAndroid.show(
-                    '이미 단어장에 존재합니다',
-                    ToastAndroid.SHORT,
-                  );
-                  return null;
-                } else {
-                  return db.saveToDict(
-                    route.params.title,
-                    curWord.voca,
-                    curWord.mean,
-                    route.params.rootVoca,
-                  );
-                }
-              })
-              .then((res: any) => {
-                if (res !== null) {
-                  console.log('## saveToDict RESPONSE ## ', res);
-                  ToastAndroid.show(
-                    '단어장에 추가되었습니다',
-                    ToastAndroid.SHORT,
-                  );
-                }
-              });
           }}>
-          <Text style={s.txtAdd}>단어장에 추가</Text>
+          <Text style={s.txtVoca}>
+            {curIdx < words.length ? curWord.voca : ''}
+          </Text>
+          <Text style={s.txtPronounce}>
+            {curIdx < words.length ? curWord.pronounce : ''}
+          </Text>
+          <Text style={s.txtMean}>
+            {curIdx < words.length && shownMean ? curWord.mean : ''}
+          </Text>
         </TouchableOpacity>
+
+        <View style={s.btnContainer}>
+          <TouchableOpacity
+            style={s.btnAdd}
+            onPressOut={() => {
+              db.isInDict(curWord.voca)
+                .then((isExist: any) => {
+                  if (isExist) {
+                    Platform.OS === 'android'
+                      ? ToastAndroid.show(
+                          '이미 단어장에 존재합니다',
+                          ToastAndroid.SHORT,
+                        )
+                      : Toast.show('이미 단어장에 존재합니다', Toast.SHORT);
+                    return null;
+                  } else {
+                    return db.saveToDict(
+                      route.params.title,
+                      curWord.voca,
+                      curWord.mean,
+                      route.params.rootVoca,
+                    );
+                  }
+                })
+                .then((res: any) => {
+                  if (res !== null) {
+                    console.log('## saveToDict RESPONSE ## ', res);
+                    Platform.OS === 'android'
+                      ? ToastAndroid.show(
+                          '단어장에 추가되었습니다',
+                          ToastAndroid.SHORT,
+                        )
+                      : Toast.show('단어장에 추가되었습니다', Toast.SHORT);
+                  }
+                });
+            }}>
+            <Text style={s.txtAdd}>단어장에 추가</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -150,7 +163,7 @@ const s = StyleSheet.create({
     marginTop: 50,
   },
   txtPronounce: {
-    fontFamily: 'wdpron',
+    fontFamily: Platform.OS === 'ios' ? 'WinDicFont' : 'wdpron',
     fontSize: 23,
     margin: 8,
   },
