@@ -28,19 +28,25 @@
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>NSAllowsArbitraryLoads</key>
+		<!-- <key>NSAllowsArbitraryLoads</key>
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
 			<key>localhost</key>
-			<dict>
+			<dict> -->
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
-			</dict>
-		</dict>
+			<!-- </dict>
+		</dict> -->
 	</dict>
+	<!-- <key>NSLocationWhenInUseUsageDescription</key>
+	<string></string> -->
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>$(PRODUCT_NAME) needs Location access for useful advertisement</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>$(PRODUCT_NAME) needs Location access for useful advertisement</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>$(PRODUCT_NAME) needs Location access for useful advertisement</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Fonts/sd_gothic_b.ttf</string>
