@@ -12,6 +12,7 @@ import Toast from 'react-native-simple-toast';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import CustomHeader from '~/components/CustomHeader';
 import db from '~/DB';
+import {TSettings} from '~/lib/types';
 
 interface prop {
   navigation: any;
@@ -32,7 +33,7 @@ const ExamScreen = ({navigation, route}: prop) => {
   useEffect(() => {
     let {words} = route.params;
 
-    db.getSettings().then((settings: any) => {
+    db.getSettings().then((settings: TSettings) => {
       if (settings.isRandom) {
         let len = words.length;
         let randomWords = new Array();
