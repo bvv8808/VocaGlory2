@@ -9,7 +9,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import Toast from 'react-native-simple-toast';
-import CustomHeader from '~/components/customHeader';
+import CustomHeader from '~/components/CustomHeader';
 import axios from 'axios';
 import db from '~/DB';
 
@@ -28,7 +28,7 @@ const StudyScreen = ({navigation, route}: prop) => {
   useEffect(() => {
     let notShowInDict = false;
     db.getSettings()
-      .then((settings: any) => {
+      .then((settings) => {
         console.log('### settings ### ', typeof settings, settings);
         // setNotShowInDict(settings.notShowWordInDict === 1 ? true : false);
         notShowInDict = settings.notShowWordInDict === 1 ? true : false;

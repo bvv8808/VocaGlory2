@@ -54,6 +54,19 @@ const HomeScreen = ({navigation}: prop) => {
           requestOptions={{
             requestNonPersonalizedAdsOnly: true,
           }}
+          onAdLoaded={() => {
+            console.log('# Ad Loaded');
+          }}
+          onAdFailedToLoad={() => {
+            console.error('# Ad Fail');
+          }}
+          onAdOpened={() => {
+            console.log('# Ad Opened');
+          }}
+          onAdClosed={() => {
+            console.log('# Ad Closed');
+          }}
+          onAdLeftApplication={() => {}}
         />
       </View>
     </View>

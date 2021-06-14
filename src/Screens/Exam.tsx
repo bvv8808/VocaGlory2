@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import Toast from 'react-native-simple-toast';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import CustomHeader from '~/components/customHeader';
+import CustomHeader from '~/components/CustomHeader';
 import db from '~/DB';
 
 interface prop {
@@ -59,27 +59,18 @@ const ExamScreen = ({navigation, route}: prop) => {
         </Text>
         <TouchableOpacity
           style={s.examTab}
-          onPressOut={() => {
+          onPress={() => {
             if (shownMean === false) {
               setShownMean(true);
             } else {
               if (curExamIdx !== -1 && curExamIdx <= examWords.length - 1) {
                 if (curExamIdx === examWords.length - 1) {
-                  Platform.OS === 'android'
-                    ? ToastAndroid.show(
-                        '시험이 종료되었습니다. \n얼마나 맞추셨나요?',
-                        ToastAndroid.SHORT,
-                      )
-                    : Toast.show(
-                        '시험이 종료되었습니다. \n얼마나 맞추셨나요?',
-                        1,
-                      );
+                  Toast.show('시험이 종료되었습니다. \n얼마나 맞추셨나요?', 1);
                   navigation.goBack();
                 } else {
                   setShownMean(false);
 
                   const nextIdx = curExamIdx + 1;
-                  // setCurWord(words[nextIdx]);
                   setCurExamIdx(nextIdx);
                 }
               }

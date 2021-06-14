@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import Toast from 'react-native-simple-toast';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import CustomHeader from '~/components/customHeader';
+import CustomHeader from '~/components/CustomHeader';
 import rootData from '~/assets/roots';
 import axios from 'axios';
 import db from '~/DB';
@@ -135,33 +135,36 @@ const StudyHomeScreen = ({navigation}: prop) => {
   }, []);
 
   return (
-    <View style={s.wrap}>
-      <CustomHeader title="단어 공부" />
-      <ScrollView>
-        <View
-          style={{
-            alignItems: 'center',
-          }}>
-          {rootData.map((root: any) => (
-            <StudyButton
-              id={root.id}
-              key={root.id}
-              title={root.title}
-              navigation={navigation}
-              rootVoca={root.rootVoca}
-              changed={root.changed}
-              rootMean={root.rootMean}
-              bgColor={root.bgColor}
-              vocaColor={root.vocaColor}
-              changedColor={root.changedColor}
-              meanColor={root.meanColor}
-              isCached={cachedTitle.includes(root.title)}
-              completedDownload={updateState_cachedTitle}
-            />
-          ))}
-        </View>
-      </ScrollView>
-    </View>
+    <SafeAreaView style={{flex: 1}}>
+      <StatusBar backgroundColor="#FBFBFB" />
+      <View style={s.wrap}>
+        <CustomHeader title="단어 공부" />
+        <ScrollView>
+          <View
+            style={{
+              alignItems: 'center',
+            }}>
+            {rootData.map((root: any) => (
+              <StudyButton
+                id={root.id}
+                key={root.id}
+                title={root.title}
+                navigation={navigation}
+                rootVoca={root.rootVoca}
+                changed={root.changed}
+                rootMean={root.rootMean}
+                bgColor={root.bgColor}
+                vocaColor={root.vocaColor}
+                changedColor={root.changedColor}
+                meanColor={root.meanColor}
+                isCached={cachedTitle.includes(root.title)}
+                completedDownload={updateState_cachedTitle}
+              />
+            ))}
+          </View>
+        </ScrollView>
+      </View>
+    </SafeAreaView>
   );
 };
 

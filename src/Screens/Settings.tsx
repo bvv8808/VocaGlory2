@@ -9,10 +9,11 @@ import {
   SafeAreaView,
 } from 'react-native';
 import Toast from 'react-native-simple-toast';
-import CustomHeader from '~/components/customHeader';
+import CustomHeader from '~/components/CustomHeader';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import db from '~/DB';
+import {TSettings} from '~/lib/types';
 
 interface prop {
   navigation: any;
@@ -35,7 +36,7 @@ const SettingsScreen = () => {
   };
 
   useEffect(() => {
-    db.getSettings().then((setting: any) => {
+    db.getSettings().then((setting) => {
       console.log(setting.isRandom, setting.notShowWordInDict);
       setIsEnabled1(setting.isRandom === 1 ? true : false);
       setIsEnabled2(setting.notShowWordInDict === 1 ? true : false);
@@ -89,12 +90,7 @@ const SettingsScreen = () => {
             <TouchableOpacity
               onPressOut={() => {
                 db.deleteCache().then(() =>
-                  Platform.OS === 'android'
-                    ? ToastAndroid.show(
-                        '캐시가 삭제되었습니다',
-                        ToastAndroid.SHORT,
-                      )
-                    : Toast.show('캐시가 삭제되었습니다', Toast.SHORT),
+                  Toast.show('캐시가 삭제되었습니다', Toast.SHORT),
                 );
               }}>
               <EvilIcons name="trash" size={50} />

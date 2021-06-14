@@ -1,7 +1,8 @@
 import SQLite from 'react-native-sqlite-storage';
+import {TSettings, TWordInDict} from '~/lib/types';
 
 const getDict = () =>
-  new Promise((resolve, reject) => {
+  new Promise<TWordInDict[]>((resolve, reject) => {
     const db = SQLite.openDatabase(
       {
         name: 'vocaglory.db',
@@ -117,7 +118,7 @@ const isInDict = (voca: string) =>
   });
 
 const getSettings = () =>
-  new Promise((resolve, reject) => {
+  new Promise<TSettings>((resolve, reject) => {
     const db = SQLite.openDatabase(
       {
         name: 'vocaglory.db',
@@ -255,7 +256,7 @@ const cacheWords = (title: string, words: string) =>
   });
 
 const getTitlesInCachedWords = () =>
-  new Promise((resolve, reject) => {
+  new Promise<string[]>((resolve, reject) => {
     const db = SQLite.openDatabase(
       {
         name: 'vocaglory.db',

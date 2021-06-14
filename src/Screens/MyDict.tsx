@@ -7,14 +7,16 @@ import {
   View,
   Dimensions,
   SafeAreaView,
+  FlatList,
 } from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import db from '~/DB';
-import CustomHeader from '~/components/customHeader';
+import CustomHeader from '~/components/CustomHeader';
 
 import {BannerAd, BannerAdSize, TestIds} from '@react-native-firebase/admob';
+import {TWordInDict} from '~/lib/types';
 
 const adUnitId = __DEV__
   ? TestIds.BANNER
@@ -48,7 +50,7 @@ const Accordian = ({curKey, curWords, goExam}: AccordianProp) => {
           <Entypo name="pencil" size={30} color="#E36473" />
         </TouchableOpacity>
       </TouchableOpacity>
-      <ScrollView style={[s.accordianBody, opened ? {} : {height: 0}]}>
+      <ScrollView style={[s.accordianBody, !opened && {height: 0}]}>
         {curWords.map((word: any) => {
           return (
             <View key={word.voca} style={s.bodyContainer}>
@@ -64,24 +66,21 @@ const Accordian = ({curKey, curWords, goExam}: AccordianProp) => {
 
 const MyDictScreen = ({navigation}: prop) => {
   const [showByDate, setShowByDate] = useState(true);
-  const [dateDict, setDateDict] = useState(new Object());
-  const [rootDict, setRootDict] = useState(new Object());
-  const [dateKeys, setDateKeys] = useState(new Array());
-  const [rootKeys, setRootKeys] = useState(new Array());
+  const [dateDict, setDateDict] = useState<any>({});
+  const [rootDict, setRootDict] = useState<any>({});
+  const [dateKeys, setDateKeys] = useState<string[]>([]);
+  const [rootKeys, setRootKeys] = useState<string[]>([]);
 
   useEffect(() => {
-    db.getDict().then((dict: any) => {
-      let initialDateDict = new Object();
-      let initialRootDict = new Object();
-      let initialDateKeys = new Array();
-      let initialRootKeys = new Array();
-      dict.forEach((word: any) => {
+    db.getDict().then((dict) => {
+      let initialDateDict: any = new Object();
+      let initialRootDict: any = new Object();
+
+      dict.forEach((word) => {
         if (initialDateDict.hasOwnProperty(word.pushedAt)) {
           initialDateDict[word.pushedAt].push(word);
         } else {
           initialDateDict[word.pushedAt] = new Array();
-          initialDateKeys.push(word.pushedAt);
-
           initialDateDict[word.pushedAt].push(word);
         }
 
@@ -89,15 +88,13 @@ const MyDictScreen = ({navigation}: prop) => {
           initialRootDict[word.rootVoca].push(word);
         } else {
           initialRootDict[word.rootVoca] = new Array();
-          initialRootKeys.push(word.rootVoca);
-
           initialRootDict[word.rootVoca].push(word);
         }
       });
       setDateDict(initialDateDict);
       setRootDict(initialRootDict);
-      setDateKeys(initialDateKeys.sort());
-      setRootKeys(initialRootKeys.sort());
+      setDateKeys(initialRootDict.keys().sort());
+      setRootKeys(initialRootDict.keys().sort());
     });
   }, []);
 
@@ -136,10 +133,34 @@ const MyDictScreen = ({navigation}: prop) => {
           </TouchableOpacity>
         </View>
 
-        <ScrollView>
+        <FlatList
+          data={showByDate ? dateKeys : rootKeys}
+          keyExtractor={(key) => key}
+          renderItem={(item) => {
+            const k: string = item.item;
+            const curWords: TWordInDict[] = showByDate
+              ? dateDict[k]
+              : rootDict[k];
+            return (
+              <Accordian
+                curWords={curWords}
+                curKey={k}
+                goExam={() =>
+                  navigation.push('Exam', {
+                    words: curWords.map((word) => ({
+                      voca: word.voca,
+                      mean: word.mean,
+                    })),
+                  })
+                }
+              />
+            );
+          }}
+        />
+        {/* <ScrollView>
           {showByDate
             ? dateKeys.map((key: string) => {
-                const curWords = dateDict[key];
+                const curWords: TWordInDict[] = dateDict[key];
                 return (
                   <Accordian
                     curWords={curWords}
@@ -147,7 +168,7 @@ const MyDictScreen = ({navigation}: prop) => {
                     key={key}
                     goExam={() =>
                       navigation.push('Exam', {
-                        words: curWords.map((word: any) => ({
+                        words: curWords.map((word) => ({
                           voca: word.voca,
                           mean: word.mean,
                         })),
@@ -157,7 +178,7 @@ const MyDictScreen = ({navigation}: prop) => {
                 );
               })
             : rootKeys.map((key: string) => {
-                const curWords = rootDict[key];
+                const curWords: TWordInDict[] = rootDict[key];
                 return (
                   <Accordian
                     curWords={curWords}
@@ -165,7 +186,7 @@ const MyDictScreen = ({navigation}: prop) => {
                     key={key}
                     goExam={() =>
                       navigation.push('Exam', {
-                        words: curWords.map((word: any) => ({
+                        words: curWords.map((word) => ({
                           voca: word.voca,
                           mean: word.mean,
                         })),
@@ -174,7 +195,7 @@ const MyDictScreen = ({navigation}: prop) => {
                   />
                 );
               })}
-        </ScrollView>
+        </ScrollView> */}
         <View style={s.adContainer}>
           <BannerAd
             unitId={adUnitId}
@@ -182,6 +203,19 @@ const MyDictScreen = ({navigation}: prop) => {
             requestOptions={{
               requestNonPersonalizedAdsOnly: true,
             }}
+            onAdLoaded={() => {
+              console.log('# Ad Loaded');
+            }}
+            onAdFailedToLoad={() => {
+              console.error('# Ad Fail');
+            }}
+            onAdOpened={() => {
+              console.log('# Ad Opened');
+            }}
+            onAdClosed={() => {
+              console.log('# Ad Closed');
+            }}
+            onAdLeftApplication={() => {}}
           />
         </View>
       </View>
